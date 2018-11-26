@@ -618,39 +618,237 @@ class TemperatureInput extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.state ={temperature: ''};
+        //this.state ={temperature: ''};
     }
     handleChange(e) {
-        this.setState({temperature: e.target.value});
+        //this.setState({temperature: e.target.value});
+        this.props.onTemperatureChange(e.target.value);
     }
     render(){
-        const temperature = this.state.temperature;
+        //const temperature = this.state.temperature;
+        const temperature = this.props.temperature;
         const scale = this.props.scale;
         return (
             <fieldset>
-                <legend>Enter temperature in {scaleNames[scale]}</legend>
+                <legend>Enter temperature in {scaleNames[scale]}:</legend>
                 <input value={temperature} onChange={this.handleChange} />
             </fieldset>
         );
     }
 }
 class TemperatureCalculator extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+        this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+        this.state = {temperature: '', scale: 'c'};
+    }
+    handleCelsiusChange(temperature) {
+        this.setState({scale: 'c', temperature});
+    }
+    handleFahrenheitChange(temperature) {
+        this.setState({scale: 'f', temperature});
+    }
     render(){
+        const scale = this.state.scale;
+        const temperature = this.state.temperature;
+        const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+        const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
         return (
             <div>
-                <TemperatureInput scale="c" />
-                <TemperatureInput scale="f" />
+                <TemperatureInput scale="c" temperature={celsius} onTemperatureChange={this.handleCelsiusChange} />
+                <TemperatureInput scale="f" temperature={fahrenheit} onTemperatureChange ={this.handleFahrenheitChange} />
+                <BoilingVerdict celsius={parseFloat(celsius)} />
             </div>
         );
     }
 }
+
 //writing conversion functions
 function toCelsius(fahrenheit) {
-    return (fahrenheit - 32) * 5 / 9;
+    return (fahrenheit - 32) * 5/9;
 }
 function toFahrenheit(celsius) {
-    return (celsius * 5/9) +32;
+    return (celsius * 9/5) + 32;
 }
+function tryConvert(temperature, convert) {
+    const input = parseFloat(temperature);
+    if(Number.isNaN(input)) {
+        return '';
+    }
+    const output = convert(input);
+    const rounded = Math.round(output * 1000) / 1000;
+    return rounded.toString();
+}
+
+// Composition vs inheritance
+function FancyBorder(props) {
+    return (
+        <div className={'FancyBorder FancyBorder-' + props.color}>
+            {props.children}
+        </div>
+    );
+}
+function WelcomeDialog() {
+    return(
+        <FancyBorder color="red">
+            <h2 className="Dialog-title">Title of Dialog...</h2>
+            <p className="Dialog-message">This is the message for dialoge...</p>
+        </FancyBorder>
+    );
+}
+
+function SplitPane(props) {
+    return (
+        <div className="SplitPane w-100">
+            <div className="SplitPane-left w-50">
+                {props.left}
+            </div>
+            <div className="SplitPane-right w-50">
+                {props.right}
+            </div>
+        </div>
+    );
+}
+function SplitPaneApp(){
+    return(
+        <SplitPane left={<Contacts />} right={<Chat />} />
+    );
+}
+function Contacts(){
+    return <div className="Contacts" />;
+}
+function Chat() {
+    return <div className="Chat" />;
+}
+function Dialog(props){
+    return (
+        <FancyBorder color="red">
+            <h1 className="Dialog-title">{props.title}</h1>
+            <p className="Dialog-message">{props.messages}</p>
+            {props.children}
+        </FancyBorder>
+    );
+}
+function DialogContent(){
+    return(
+        <Dialog title="Welcome" messages="Thank you for visiting our spacecraft!" />
+    );
+}
+class SignUpDialog extends React.Component{
+    constructor(props){
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSignUp = this.handleSignUp.bind(this);
+        this.state = {login: ''};
+    }
+    render(){
+        return (
+            <div>
+                <Dialog title="Mars Exploreation Program" messages="how should we refer to you?" />
+                <input value={this.state.login} onChange={this.handleChange} />
+                <button onClick={this.handleSignUp}>Sign Me Up!</button>
+            </div>
+        );
+    }
+    handleChange(e){
+        this.setState({login: e.target.value});
+    }
+    handleSignUp() {
+        alert('Welcome aboard '+ this.state.login);
+        console.log('Welcome aboard '+ this.state.login);
+    }
+}
+
+// Thinking in React
+class FilterableProductTable extends React.Component {
+    render(){
+        return (
+            <div>
+                <SearchBar />
+                <ProductTable products={this.props.products} />
+            </div>
+        );
+    }
+}
+class ProductCategoryRow extends React.Component {
+    render(){
+        const category = this.props.category;
+        return(
+            <tr>
+                <th colSpan="2">{category}</th>
+            </tr>
+        );
+    }
+}
+class ProductRow extends React.Component {
+    render(){
+        const product = this.props.product;
+        const name = product.stocked ? product.name : <span style={{color: 'red'}}>{product.name}</span>;
+        return(
+            <tr>
+                <td>{name}</td>
+                <td>{product.price}</td>
+            </tr>
+        );
+    }
+}
+class SearchBar extends React.Component {
+    render(){
+        return(
+            <form>
+                <input type="text" placeholder="Search..." />
+                <p>
+                    <input type="checkbox" />
+                    {' '}
+                    only show products in stock
+                </p>
+            </form>
+        );
+    }
+}
+class ProductTable extends React.Component {
+    render() {
+        const rows = [];
+        let lastCategory = null;
+        this.props.products.forEach((product) => {
+            if(product.category !== lastCategory) {
+                rows.push(
+                    <ProductCategoryRow category={product.category} key={product.category} />
+                );
+            }
+            rows.push(
+                <ProductRow product={product} key={product.name} />
+            );
+            lastCategory = product.category;
+        });
+        return (
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {/* <tr>
+                        <td>{product.name}</td>
+                        <td>{product.price}</td>
+                    </tr> */}
+                    {rows}
+                </tbody>
+            </table>            
+        );
+    }
+}
+
+const PRODUCTS = [
+    {category:"Sporting Goods", price:'$49', stocked:true, name:'Football'},
+    {category:"Electronis", price:'$123', stocked:true, name:'imac'},
+    {category:"Sports", price:'$78', stocked:false, name:'hocky'},
+    {category:"Elctricals", price:'$34', stocked:false, name:'iphone10'},
+    {category:"Office", price:'$56', stocked:false, name:'excel'}
+]
 
 //ReactDOM.render(<input value="hi" />, mountNode);
 //ReactDOM.render(<App />, document.getElementById('root'));
@@ -705,3 +903,8 @@ ReactDOM.render(<Blog posts={posts}/>, document.getElementById('e40'));
 ReactDOM.render(<Reservation />, document.getElementById('e41'));
 ReactDOM.render(<Calculator />, document.getElementById('e42'));
 ReactDOM.render(<TemperatureCalculator />, document.getElementById('e43'));
+ReactDOM.render(<WelcomeDialog />, document.getElementById('e44'));
+ReactDOM.render(<SplitPaneApp />, document.getElementById('e45'));
+ReactDOM.render(<DialogContent />, document.getElementById('e46'));
+ReactDOM.render(<SignUpDialog />, document.getElementById('e47'));
+ReactDOM.render(<FilterableProductTable products={PRODUCTS}/>, document.getElementById('e48'));
