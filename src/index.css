@@ -32,9 +32,23 @@ code {
 .float-r {
   float: right;
 }
+.links {
+  color: red;
+  padding: 10px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+}
+
+.links:hover {
+  background-color: aquamarine;
+}
 #e14 ul{
   margin-left: 0;
   padding-left: 0;
+}
+.menu-item {
+  display: inline-block;
+  padding-right: 20px;
 }
 #e14 ul li:first-child {
   padding-left: 0;

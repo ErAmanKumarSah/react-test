@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+//import App from './App';
+//import * as serviceWorker from './serviceWorker';
 
 const firstName = 'Daniel';
 const lastName = 'Ritchie';
@@ -31,7 +31,7 @@ const user = {
 const element4 = <h4>First Name : {user.firstName} <br /> Last Name : {user.lastName}</h4>;
 const element5 = (<h3>Mr. {formatName(user)}</h3>);
 const element6 = <div tabIndex="0">Element6</div>;
-const element7 = <img src={user.avatarUrl}></img>;
+//const element7 = <img src={user.avatarUrl}></img>;
 //const title = response.potentiallyMaliciousInput;
 //const element8 = <h3>{title}</h3>;
 const element9 = React.createElement(
@@ -68,7 +68,8 @@ function Welcome(props) {
 //const element12 = <div />;
 const element13 = <Welcome name="Sara" />;
 
-function formatDate(date) {
+function FormatDate(date) {
+    date = new Date();
     return date.toLocaleDateString();
 }
 
@@ -236,9 +237,9 @@ function ClockApp() {
   }
 
 // Handling events
-function activateLasers() {
-    console.log('onclick event');
-}
+// function activateLasers() {
+//     console.log('onclick event');
+// }
 
 function ActionLink() {
     function handleClick(e) {
@@ -246,7 +247,7 @@ function ActionLink() {
         console.log('The link was clicked');
     }
     return (
-        <a href="#" onClick={handleClick}>Click me</a>
+        <a href={tutorial_link} onClick={handleClick} target="_blank">Click me for Action</a>
     );
 }
 
@@ -414,43 +415,44 @@ class Page extends React.Component {
 const numbers = [9,7,5,3,1];
 const doubled = numbers.map((number) => number * 2);
 console.log(numbers, doubled);
-const listItems = numbers.map((number) => <li>{number}</li>);
-
-function NumberList(props) {
-    const numberss = props.numberss;
-    const listItems = numberss.map((number) => <li>{number}</li>);
-    return ( <ul>{listItems}</ul> );
-}
-const numberss = [1,2,3,4,5];
+const listItems0 = numbers.map((number) => <li>{number}</li>);
 
 function NumberList2(props) {
-    const numbers = props.numbers;
-    const listItems = numbers.map((number) => <li key={number.toString()}>{number*2}</li>);
-    return (<ul className="numberlist2">{listItems}</ul>);
+    const numbers2 = props.numbers2;
+    const listItems2 = numbers2.map((number) => <li>{number}</li>);
+    return ( <ul >{listItems2}</ul> );
 }
+const numbers2 = [1,12,13,14,15];
 
-function ListItem(props) {
+function NumberList3(props) {
+    const numbers3 = props.numbers3;
+    const listItems3 = numbers3.map((number) => <li key={number}>{number*2.5}</li>);
+    return (<ul className="numberlist3">{listItems3} - list3</ul>);
+}
+const numbers3 = [2,22,32,42,12];
+function ListItemFn(props) {
     const value = props.value;
     return (
       // Wrong! There is no need to specify the key here:
       <li key={value.toString()}>
-        {value}
+        {value} - Test
       </li>
     );
   }
-  function NumberList3(props) {
-    const numbers = props.numbers;
-    const listItems = numbers.map((number) =>
+
+  function NumberList4(props) {
+    const numbers4 = props.numbers4;
+    const listItems4 = numbers4.map((numberd) =>
       // Wrong! The key should have been specified here:
-      <ListItem value={number} />
+      <ListItemFn value={numberd} />
     );
     return (
       <ul>
-        {listItems}
+        {listItems4}
       </ul>
     );
   }
-
+  const numbers4 = [3,33,333,3333,33333];
   function Blog(props) {
       const sidebar = (          
             <ul>
@@ -850,6 +852,29 @@ const PRODUCTS = [
     {category:"Office", price:'$56', stocked:false, name:'excel'}
 ]
 
+//function ScheduleDate(date) {
+class ScheduleDate extends React.Component { 
+    render() {
+        const date = new Date();
+        const current_time = date.toLocaleTimeString();
+        //const set_time = this.set_time.bind(this);
+        const timestamp = 120 * 60;
+        const hours = Math.floor(timestamp/60/60), mins = Math.floor((timestamp - hours *60*60)/ 60 ), output=hours%24+":"+mins;
+        const next_time = current_time;
+        return (
+            <div>
+                <h2>current_time : {current_time}</h2>
+                <div>
+                    <input value={this.setState} name="" placeholder="Set the time for alarm" />
+                </div>
+                <h2>next_time : {next_time}</h2>
+                <p>hours : {hours}</p>
+            </div>
+        );
+    }
+}
+//setInterval(ScheduleDate, 1000);
+
 //ReactDOM.render(<input value="hi" />, mountNode);
 //ReactDOM.render(<App />, document.getElementById('root'));
 ReactDOM.render(element,  document.getElementById('root'));
@@ -893,10 +918,10 @@ ReactDOM.render(<LoginControl />, document.getElementById('e30'));
 ReactDOM.render(<Mailbox unreadMessages={messages} />, document.getElementById('e31'));
 //ReactDOM.render(<Ifelse isLoggedIn={? 'currently' : 'not'}/>, document.getElementById('e32'));
 ReactDOM.render(<Page />, document.getElementById('e33'));
-ReactDOM.render(<ul>{listItems}</ul>, document.getElementById('e34'));
-ReactDOM.render(<NumberList numberss={numberss} />, document.getElementById('e35'));
-ReactDOM.render(<NumberList2 numbers={numbers} />, document.getElementById('e36'));
-ReactDOM.render(<NumberList3 numbers={numbers} />, document.getElementById('e37'));
+ReactDOM.render(<ul>{listItems0}</ul>, document.getElementById('e34'));
+ReactDOM.render(<NumberList2 numbers2={numbers2} />, document.getElementById('e35'));
+ReactDOM.render(<NumberList3 numbers3={numbers3} />, document.getElementById('e36'));
+ReactDOM.render(<NumberList4 numbers4={numbers4} />, document.getElementById('e37'));
 ReactDOM.render(<NameForm />, document.getElementById('e38'));
 ReactDOM.render(<SelectForm  />, document.getElementById('e39'));
 ReactDOM.render(<Blog posts={posts}/>, document.getElementById('e40'));
@@ -908,3 +933,5 @@ ReactDOM.render(<SplitPaneApp />, document.getElementById('e45'));
 ReactDOM.render(<DialogContent />, document.getElementById('e46'));
 ReactDOM.render(<SignUpDialog />, document.getElementById('e47'));
 ReactDOM.render(<FilterableProductTable products={PRODUCTS}/>, document.getElementById('e48'));
+ReactDOM.render(<FormatDate date={new Date()}/>, document.getElementById('e49'));
+ReactDOM.render(<ScheduleDate date = {new Date()} />, document.getElementById('e50'));
